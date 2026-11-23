@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DSA Algorithm Visualizer | Interactive Data Structures & Algorithms</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- App Styles -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/visualizers.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="brand-wrapper">
+      <i class="ph-bold ph-tree-structure brand-icon"></i>
+      <h1 class="brand-title">DSA Visualizer</h1>
+      <span class="brand-tag">Interactive Suite</span>
+    </div>
+
+    <!-- Category Tabs -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="nav-tab active" data-category="sorting" role="tab" aria-selected="true">
+        <i class="ph-bold ph-chart-bar"></i>
+        <span>Sorting</span>
+      </button>
+      <button class="nav-tab" data-category="searching" role="tab" aria-selected="false">
+        <i class="ph-bold ph-magnifying-glass"></i>
+        <span>Searching</span>
+      </button>
+      <button class="nav-tab" data-category="datastructures" role="tab" aria-selected="false">
+        <i class="ph-bold ph-stack"></i>
+        <span>Data Structures</span>
+      </button>
+      <button class="nav-tab" data-category="pathfinding" role="tab" aria-selected="false">
+        <i class="ph-bold ph-compass"></i>
+        <span>Pathfinding & Graph</span>
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button id="btn-sound" class="btn btn-secondary btn-sound" title="Toggle Synthesizer Sound (Key: M)">
+        <i class="ph-bold ph-speaker-high"></i>
+        <span>Sound: On</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-container">
+
+    <!-- Top Dynamic Controls Toolbar -->
+    <section class="control-toolbar" aria-label="Algorithm Controls">
+      
+      <!-- Primary Selector (Dynamic based on Category) -->
+      <div class="control-group">
+        <label for="algo-select" style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Algorithm:</label>
+        <select id="algo-select" class="control-select">
+          <!-- Populated by JS -->
+        </select>
+      </div>
+
+      <!-- Sorting Controls -->
+      <div id="sorting-controls" class="control-group">
+        <button id="btn-randomize" class="btn btn-secondary" title="Generate New Random Array">
+          <i class="ph-bold ph-shuffle"></i>
+          <span>Randomize</span>
+        </button>
+        <button id="btn-custom-input" class="btn btn-secondary" title="Input Custom Numbers">
+          <i class="ph-bold ph-pencil-simple"></i>
+          <span>Custom Input</span>
+        </button>
+
+        <div class="slider-group">
+          <label for="size-slider">Array Size:</label>
+          <input type="range" id="size-slider" class="slider-range" min="6" max="40" value="25">
+          <span id="size-value" class="slider-val">25</span>
+        </div>
+
+        <div class="slider-group">
+          <label for="speed-slider">Speed:</label>
+          <input type="range" id="speed-slider" class="slider-range" min="1" max="100" value="85">
+        </div>
+      </div>
+
+      <!-- Searching Controls -->
+      <div id="searching-controls" class="control-group hidden">
+        <label for="search-target-input" style="font-size: 0.85rem; font-weight: 500;">Target:</label>
+        <input type="number" id="search-target-input" class="control-input input-small" value="42" min="1" max="100">
+        <button id="btn-set-target" class="btn btn-secondary">
+          <i class="ph-bold ph-crosshair"></i>
+          <span>Set Target</span>
+        </button>
+      </div>
+
+      <!-- Data Structure Controls -->
+      <div id="ds-controls" class="control-group hidden">
+        <label for="ds-select" style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Structure:</label>
+        <select id="ds-select" class="control-select">
+          <option value="stack">Stack (LIFO)</option>
+          <option value="queue">Queue (FIFO)</option>
+          <option value="singly-linked-list">Singly Linked List</option>
+          <option value="doubly-linked-list">Doubly Linked List</option>
+          <option value="bst">Binary Search Tree (BST)</option>
+        </select>
+
+        <input type="number" id="ds-value-input" class="control-input input-small" placeholder="Val" min="1" max="999">
+        <button id="btn-ds-action1" class="btn btn-primary">Push</button>
+        <button id="btn-ds-action2" class="btn btn-secondary">Pop</button>
+        <button id="btn-ds-action3" class="btn btn-secondary">Peek</button>
+        <button id="btn-ds-action4" class="btn btn-secondary hidden">Search</button>
+        <div id="ds-suboptions"></div>
+        <button id="btn-ds-clear" class="btn btn-danger">
+          <i class="ph-bold ph-trash"></i>
+          <span>Clear</span>
+        </button>
+      </div>
+
+      <!-- Pathfinding Controls -->
+      <div id="pathfinding-controls" class="control-group hidden">
+        <button id="btn-run-pathfinding" class="btn btn-primary">
+          <i class="ph-bold ph-play"></i>
+          <span>Run Visualizer</span>
+        </button>
+        <button id="btn-generate-maze" class="btn btn-secondary">
+          <i class="ph-bold ph-grid-four"></i>
+          <span>Generate Maze</span>
+        </button>
+        <button id="btn-clear-path" class="btn btn-secondary">
+          <i class="ph-bold ph-eraser"></i>
+          <span>Clear Path</span>
+        </button>
+        <button id="btn-clear-walls" class="btn btn-danger">
+          <i class="ph-bold ph-trash"></i>
+          <span>Clear Walls</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Playback Timeline Bar (For Step-by-Step Execution) -->
+    <section id="playback-bar" class="playback-bar" aria-label="Playback Controls">
+      <div class="playback-buttons">
+        <button id="btn-reset" class="btn btn-secondary" title="Reset to Beginning (Key: R)">
+          <i class="ph-bold ph-skip-back"></i>
+          <span>Reset</span>
+        </button>
+        <button id="btn-step-back" class="btn btn-secondary" title="Step Backward (Key: ←)">
+          <i class="ph-bold ph-caret-left"></i>
+          <span>Step Back</span>
+        </button>
+        <button id="btn-play" class="btn btn-primary" title="Play / Pause (Key: Space)">
+          <i class="ph-bold ph-play"></i>
+          <span>Play</span>
+        </button>
+        <button id="btn-step-forward" class="btn btn-secondary" title="Step Forward (Key: →)">
+          <span>Step Forward</span>
+          <i class="ph-bold ph-caret-right"></i>
+        </button>
+      </div>
+
+      <!-- Scrubber Slider -->
+      <div class="timeline-wrapper">
+        <input type="range" id="timeline-scrubber" class="timeline-range" min="0" max="0" value="0">
+        <span id="step-counter" class="timeline-counter">0 / 0</span>
+      </div>
+    </section>
+
+    <!-- Center Stage & Right Inspector Layout -->
+    <div class="vis-content-layout">
+
+      <!-- Visualization Canvas Area -->
+      <section class="vis-stage-panel">
+        
+        <!-- Sorting View -->
+        <div id="sorting-stage" class="stage-wrapper"></div>
+
+        <!-- Searching View -->
+        <div id="searching-stage" class="stage-wrapper hidden"></div>
+
+        <!-- Data Structures View -->
+        <div id="ds-stage" class="stage-wrapper hidden">
+          <div id="ds-canvas-area" class="ds-canvas-area"></div>
+        </div>
+
+        <!-- Pathfinding View -->
+        <div id="pathfinding-stage" class="stage-wrapper hidden">
+          <div class="pathfinding-stage-wrapper">
+            <div id="pathfinding-grid" class="grid-board"></div>
+            <div class="grid-legend">
+              <div class="legend-item"><div class="legend-swatch swatch-start"></div><span>Start Node (Drag)</span></div>
+              <div class="legend-item"><div class="legend-swatch swatch-end"></div><span>Target Node (Drag)</span></div>
+              <div class="legend-item"><div class="legend-swatch swatch-wall"></div><span>Wall / Obstacle (Click & Drag)</span></div>
+              <div class="legend-item"><div class="legend-swatch swatch-visited"></div><span>Visited Node</span></div>
+              <div class="legend-item"><div class="legend-swatch swatch-path"></div><span>Shortest Path</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Commentary Box -->
+        <div id="live-commentary" class="live-commentary-box">
+          <span class="step-badge">Ready</span>
+          <span>Select an algorithm and press Play to visualize step-by-step execution.</span>
+        </div>
+
+      </section>
+
+      <!-- Right Inspector & Educational Analysis Sidebar -->
+      <aside class="inspector-sidebar">
+        
+        <!-- Algorithm Overview Card -->
+        <div class="inspector-card">
+          <div class="card-header">
+            <h2 id="algo-title" class="card-title">
+              <i class="ph-bold ph-info"></i>
+              <span>Bubble Sort</span>
+            </h2>
+            <span id="algo-category-badge" class="meta-pill pill-green">Sorting</span>
+          </div>
+
+          <!-- Time Complexity Grid -->
+          <div class="complexity-grid">
+            <div class="complexity-item">
+              <span class="complexity-label">Best Time</span>
+              <span id="time-best" class="complexity-val">O(n)</span>
+            </div>
+            <div class="complexity-item">
+              <span class="complexity-label">Average Time</span>
+              <span id="time-avg" class="complexity-val">O(n²)</span>
+            </div>
+            <div class="complexity-item">
+              <span class="complexity-label">Worst Time</span>
+              <span id="time-worst" class="complexity-val">O(n²)</span>
+            </div>
+          </div>
+
+          <!-- Space Complexity & Properties -->
+          <div class="complexity-grid" style="grid-template-columns: 1fr;">
+            <div class="complexity-item" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.85rem;">
+              <span class="complexity-label" style="margin: 0;">Worst Space Complexity:</span>
+              <span id="space-complexity" class="complexity-val" style="color: var(--accent-cyan);">O(1)</span>
+            </div>
+          </div>
+
+          <div class="meta-pills-row">
+            <span id="in-place-badge" class="meta-pill pill-green">In-Place: Yes</span>
+            <span id="stable-badge" class="meta-pill pill-green">Stable: Yes</span>
+          </div>
+
+          <p id="algo-description" class="algo-desc">
+            Bubble Sort is a simple comparison-based algorithm that repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order.
+          </p>
+        </div>
+
+        <!-- Pseudocode Viewer with Real-Time Highlighting -->
+        <div class="inspector-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="ph-bold ph-code"></i>
+              <span>Pseudocode</span>
+            </h3>
+          </div>
+          <div id="pseudocode-lines" class="pseudocode-container">
+            <!-- Dynamically populated with active line highlighting -->
+          </div>
+        </div>
+
+        <!-- Real-Time Event & Execution Log -->
+        <div class="inspector-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="ph-bold ph-terminal-window"></i>
+              <span>Execution Log</span>
+            </h3>
+          </div>
+          <div id="event-log" class="event-log-container">
+            <div class="log-entry log-info"><span class="log-time">00:00:00</span> <span class="log-msg">Visualizer initialized. Ready.</span></div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+  <!-- Main ES6 Modules -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
